@@ -23,7 +23,7 @@ class StudyLibraryApp extends StatelessWidget {
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
       theme: appTheme,
-      home: const HomeScreen(),
+      home: HomeScreen(),
     );
   }
 }
