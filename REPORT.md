@@ -9,7 +9,6 @@
 - **HomeScreen Dynamic Refactor:** I refactored the HomeScreen from hardcoded duplicate UI cards to dynamic list mapping using a structured mock list of study documents with progress indicators (lib/screens/home_screen.dart).
 - **PDF Viewer Spike & Integration:** I added the pdfrx package dependency to pubspec.yaml, created lib/screens/pdf_viewer_screen.dart, and wired up navigation from the home screen.
 - **WASM & CORS Troubleshooting (Flutter Web):** I resolved pdfium client asset bundling issues via Flutter Hot Restart and overcame Chrome CORS network fetch restrictions by switching to local asset loading (assets/dummy.pdf).
-- **AI Usage Documentation:** I structured and updated AI-USAGE.md to transparently disclose AI pair-programming and documentation assistance for course requirements.
 
 ## Why
 
