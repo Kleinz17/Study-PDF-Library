@@ -13,7 +13,7 @@ class PdfViewerScreen extends StatelessWidget {
         title: Text(title),
       ),
       //pdfViewer.url loads pdf from network URL
-      body: PdfViewer.asset('assets/dummy.pdf'),
+      body: PdfViewer.asset('assets/dummy1.pdf'),
     );
   }
 }
