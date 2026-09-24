@@ -28,6 +28,12 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/launch.json
+AGENTS.md
+TODO.md
+
+#Temporary Block
+AI-USAGE.md
+SECURITY-CHECKLIST.md
 
 # Ignore my design assets and PDF proposal
 proposal-design/

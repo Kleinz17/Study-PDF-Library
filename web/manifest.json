@@ -1,6 +1,6 @@
 {
-  "name": "My Final Project",
-  "short_name": "Final Project",
+  "name": "Study PDF Library",
+  "short_name": "Study PDF",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#FFFFFF",
