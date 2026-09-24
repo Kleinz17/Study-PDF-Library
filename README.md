@@ -1,8 +1,8 @@
 # Study PDF Library
 
-**Live demo:** kleinz17.github.io/Study-PDF-Library/
-**Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University  
-**Author:** Kleinz17 
+- **Live demo:** kleinz17.github.io/Study-PDF-Library/
+- **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University  
+- **Author:** Kleinz17 
 
 ---
 
@@ -117,6 +117,6 @@ lib/
 
 ## AI Usage
 
-- AI tools (Claude / ChatGPT /Agents) were used as coding assistants for structuring Material 3 themes, wiring navigation, and drafting documentation. See `AI-USAGE.md` for full details.
+- AI tools (Claude / ChatGPT /Agents) were used as coding assistants for structuring Material 3 themes, wiring navigation, and drafting documentation. They are also used for self studying app development, See `AI-USAGE.md` for full details.
 
 
