@@ -40,7 +40,7 @@ class Bookmarks extends Table {
     IntColumn get documentId => integer()(); // Foreign Key link to documents
 }
 
-@DriftDatabase(tables: [Documents, Folders, Tasks])
+@DriftDatabase(tables: [Documents, Folders, Tasks, Bookmarks])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
