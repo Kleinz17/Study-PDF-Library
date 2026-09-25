@@ -37,18 +37,19 @@ Follow these steps to get the app running from scratch:
 
 ## 3. How to run it
 
-Run the app using the following command:
+Run the app on Windows desktop:
 
+```bash
+flutter run -d windows
+```
+
+or on Chrome:
+(currently unavailable)
 ```bash
 flutter run -d chrome
 ```
-or
 
-```bash
-flutter run -d chrome --web-port 8080
-```
-
-When running successfully, you should see the `device_preview` phone frame wrapping the **Study Library Home Screen**, displaying reviewer cards with progress indicators, which you can tap to open the PDF Viewer.
+When running successfully, you will see the **Study Library Home Screen**, where you can import local PDF files using the floating action button, save them to the local Drift database, and view them natively in the PDF Viewer.
 
 ---
 
@@ -117,6 +118,6 @@ lib/
 
 ## AI Usage
 
-- AI tools (Claude / ChatGPT /Agents) were used as coding assistants for structuring Material 3 themes, wiring navigation, and drafting documentation. They are also used for self studying app development, See `AI-USAGE.md` for full details.
+- AI tools (Claude / ChatGPT / Agents) were used as coding assistants for structuring Material 3 themes, wiring navigation, and drafting documentation. They are also used for self studying app development, See `AI-USAGE.md` for full details.
 
 
