@@ -48,13 +48,7 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
-    // drift_flutter handles Web WasmDatabase vs Native SQLite automatically!
-    return driftDatabase(
-      name: 'study_pdf_library_db',
-      web: DriftWebOptions(
-        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
-        driftWorker: Uri.parse('drift_worker.js'),
-      ),
-    );
+     // drift_flutter automatically uses native SQLite on Windows, macOS, Linux, Android, and iOS!
+    return driftDatabase(name: 'study_pdf_library_db');
   }
 }
