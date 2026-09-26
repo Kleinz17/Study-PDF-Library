@@ -21,6 +21,7 @@ dependencies:
   drift_flutter: ^0.1.0 # cross-platform helper
   sqlite3_flutter_libs: ^0.5.20 #native sqlite 
   file_picker: ^13.1.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
