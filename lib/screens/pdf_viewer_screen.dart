@@ -1,24 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'package:drift/drift.dart';
+import '../database/app_database.dart';
 
-class PdfViewerScreen extends StatelessWidget {
-  final String title;
-  final String filePath; // Add this
-
+class PdfViewerScreen extends StatefulWidget {
   const PdfViewerScreen({
-    super.key, 
+    super.key,
+    required this.documentId,
     required this.title,
-    required this.filePath, // Require it in constructor
+    required this.filePath,
+    this.initialPage = 1,
   });
-  
+
+  final int documentId;
+  final String title;
+  final String filePath;
+  final int initialPage;
+
+  @override
+  State<PdfViewerScreen> createState() => _PdfViewerScreenState();
+}
+
+class _PdfViewerScreenState extends State<PdfViewerScreen> {
+  final db = AppDatabase();
+
+  void _onPageChanged(int? pageNumber) {
+    if (pageNumber == null) return;
+    (db.update(db.documents)..where((d) => d.id.equals(widget.documentId)))
+        .write(DocumentsCompanion(lastPageRead: Value(pageNumber)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
+      appBar: AppBar(title: Text(widget.title)),
+      body: PdfViewer.file(
+        widget.filePath,
+        initialPageNumber: widget.initialPage,
+        params: PdfViewerParams(onPageChanged: _onPageChanged),
       ),
-      // Use PdfViewer.file for local file paths on desktop/mobile
-      body: PdfViewer.file(filePath), 
     );
   }
 }

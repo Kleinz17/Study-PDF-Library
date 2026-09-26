@@ -2,9 +2,11 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import '../widgets/pdf_card.dart';
+import '../widgets/primary_app_bar.dart';
 import '../theme.dart';
 import 'pdf_viewer_screen.dart';
 import '../database/app_database.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 class HomeScreen extends StatelessWidget{
   HomeScreen({super.key});
@@ -14,7 +16,24 @@ class HomeScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(title: const Text('Study Library')),
+      appBar: PrimaryAppBar(
+        title: 'Study Library',
+        //this is a placeholder until one exists.
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          tooltip: 'Menu',
+          onPressed: () {},
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search',
+            // Search placeholder
+            onPressed: () {},
+          ),
+        ],
+      ),
+      
       body: StreamBuilder<List<Document>>(
         stream: db.select(db.documents).watch(),
         builder: (context, snapshot) {
@@ -37,11 +56,11 @@ class HomeScreen extends StatelessWidget{
               return PdfCard(
                 fileName: doc.fileName,
                 progress: progress,
-                progressLabel: '${(progress * 100).toInt()}% Completed',
+                progressLabel: 'P ${doc.lastPageRead} of ${doc.totalPages} · ${(progress * 100).toInt()}% \nCompleted',
                 onTap:(){
                   Navigator.push(
                     context, 
-                    MaterialPageRoute(builder: (context) => PdfViewerScreen(title: doc.title, filePath: doc.filePath),)
+                    MaterialPageRoute(builder: (context) => PdfViewerScreen(documentId: doc.id, title: doc.title, filePath: doc.filePath),)
                   );
                 },
               );
@@ -49,7 +68,8 @@ class HomeScreen extends StatelessWidget{
           );
         }
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
         onPressed: () async {
           final files = await FilePicker.pickFiles(
             type: FileType.custom,
@@ -68,16 +88,21 @@ class HomeScreen extends StatelessWidget{
             debugPrint('Could not get file path.');
             return;
           }
-            final document = DocumentsCompanion(
-              fileName: Value(file.name),
-              title: Value(file.name),
-              filePath: Value(file.path!),
-            );
+
+          final pdfDoc = await PdfDocument.openFile(file.path!);
+          final totalPages = pdfDoc.pages.length;
+          await pdfDoc.dispose();
+
+          final document = DocumentsCompanion(
+            fileName: Value(file.name),
+            title: Value(file.name),
+            filePath: Value(file.path!),
+            totalPages: Value(totalPages),   // ← new
+          );
 
           await db.into(db.documents).insert(document);
         },
-        icon: const Icon(Icons.add),
-        label: const Text('Import PDF'),
+        child: const Icon(Icons.add),
       ),
     );
   }

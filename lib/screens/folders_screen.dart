@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/primary_app_bar.dart';
 
 class FoldersScreen extends StatelessWidget {
   const FoldersScreen({super.key});
@@ -6,7 +7,10 @@ class FoldersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Folders')),
+      appBar: const PrimaryAppBar(
+        title: 'Folders',
+        // '+' action to create a folder is wired in Phase 3.
+      ),
       body: const Center(child: Text('Folders Screen')),
     );
   }

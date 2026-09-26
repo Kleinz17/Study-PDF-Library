@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppSpacing {
   static const double xs = 4;
@@ -18,7 +19,18 @@ class StatusColors {
 }
 
 final appTheme = ThemeData(
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFF31628D), // colorScheme.primary
+    foregroundColor: Colors.white,      // colorScheme.onPrimary — title/icon color
+    titleTextStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+
   useMaterial3: true,
+  fontFamily: GoogleFonts.inter().fontFamily,
   colorScheme: const ColorScheme.light(
     primary: Color(0xFF31628D),
     onPrimary: Colors.white,
@@ -37,9 +49,10 @@ final appTheme = ThemeData(
   scaffoldBackgroundColor: const Color(0xFFF7F9FF),
   textTheme: const TextTheme(
     headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    bodyMedium: TextStyle(fontSize: 16),
-    labelSmall: TextStyle(fontSize: 12, color: Color(0xFF526070)),
+    bodyMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    labelSmall: TextStyle(fontSize: 12, color: Color(0xFF526070), fontWeight: FontWeight.bold),
   ),
+
   cardTheme: const CardThemeData(
     margin: EdgeInsets.all(AppSpacing.sm),
     shape: RoundedRectangleBorder(
@@ -50,5 +63,26 @@ final appTheme = ThemeData(
   filledButtonTheme: FilledButtonThemeData(
     style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
   ),
+
+  
+  navigationBarTheme: NavigationBarThemeData(
+    indicatorColor: Colors.transparent,
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      return IconThemeData(
+        color: states.contains(WidgetState.selected)
+            ? const Color(0xFF31628D)  // primary
+            : const Color(0xFF526070), // secondary — your muted/inactive color
+      );
+    }),
+    labelTextStyle: WidgetStateProperty.resolveWith((states) {
+      return TextStyle(
+        fontSize: 12,
+        color: states.contains(WidgetState.selected)
+            ? const Color(0xFF31628D)
+            : const Color(0xFF526070),
+      );
+    }),
+  ),
+
 );
 
