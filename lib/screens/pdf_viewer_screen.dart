@@ -6,12 +6,14 @@ import '../database/app_database.dart';
 class PdfViewerScreen extends StatefulWidget {
   const PdfViewerScreen({
     super.key,
+    required this.db,          
     required this.documentId,
     required this.title,
     required this.filePath,
     this.initialPage = 1,
   });
 
+  final AppDatabase db;           
   final int documentId;
   final String title;
   final String filePath;
@@ -22,11 +24,12 @@ class PdfViewerScreen extends StatefulWidget {
 }
 
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
-  final db = AppDatabase();
+
 
   void _onPageChanged(int? pageNumber) {
     if (pageNumber == null) return;
-    (db.update(db.documents)..where((d) => d.id.equals(widget.documentId)))
+    (widget.db.update(widget.db.documents)     
+          ..where((d) => d.id.equals(widget.documentId)))
         .write(DocumentsCompanion(lastPageRead: Value(pageNumber)));
   }
 

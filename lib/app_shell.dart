@@ -4,10 +4,8 @@ import 'screens/folders_screen.dart';
 import 'screens/kanban_screen.dart';
 import 'screens/settings_screen.dart';
 import 'widgets/app_bottom_nav.dart';
+import 'database/app_database.dart';
 
-/// Owns the selected tab and swaps between the 4 main screens.
-/// The PDF Viewer is pushed on top of this (via Navigator.push from
-/// HomeScreen), so it isn't one of the tabs and has no bottom nav.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -17,15 +15,20 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int _currentIndex = 0;
+  final db = AppDatabase();   // ← ADD: one instance for the whole app session
 
   void _goToTab(int index) => setState(() => _currentIndex = index);
 
   @override
+  void dispose() {            // ← ADD: this whole method
+    db.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // IndexedStack keeps each screen's state alive when switching tabs
-    // (e.g. Folders' scroll position isn't lost when you check Settings).
     final screens = [
-      HomeScreen(),
+      HomeScreen(db: db),                          // ← CHANGE: was HomeScreen()
       const FoldersScreen(),
       const KanbanScreen(),
       SettingsScreen(onGoHome: () => _goToTab(0)),

@@ -9,9 +9,9 @@ import '../database/app_database.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 class HomeScreen extends StatelessWidget{
-  HomeScreen({super.key});
+  const HomeScreen({super.key, required this.db});
 
-  final db = AppDatabase();
+  final AppDatabase db;
 
   @override
   Widget build(BuildContext context){
@@ -56,11 +56,19 @@ class HomeScreen extends StatelessWidget{
               return PdfCard(
                 fileName: doc.fileName,
                 progress: progress,
-                progressLabel: 'P ${doc.lastPageRead} of ${doc.totalPages} · ${(progress * 100).toInt()}% \nCompleted',
+                progressLabel: 'P ${doc.lastPageRead} of ${doc.totalPages} · ${(progress * 100).toInt()}% Completed',
                 onTap:(){
                   Navigator.push(
                     context, 
-                    MaterialPageRoute(builder: (context) => PdfViewerScreen(documentId: doc.id, title: doc.title, filePath: doc.filePath),)
+                    MaterialPageRoute(
+                      builder: (context) => PdfViewerScreen(
+                        db: db,
+                        documentId: doc.id, 
+                        title: doc.title, 
+                        filePath: doc.filePath,
+                        initialPage: doc.lastPageRead,
+                      ),
+                    )
                   );
                 },
               );
