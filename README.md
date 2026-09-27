@@ -1,6 +1,6 @@
 # Study PDF Library
 
-- **Live demo:** kleinz17.github.io/Study-PDF-Library/
+- **Live demo:** [kleinz17.github.io/Study-PDF-Library/](https://kleinz17.github.io/Study-PDF-Library/)
 - **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University  
 - **Author:** Kleinz17 
 
@@ -19,12 +19,17 @@ Follow these steps to get the app running from scratch:
 - **Flutter & Dart Versions:** Built with Flutter 3.44.8 (Dart 3.12.2).
 - **Clone the repository:**
   ```bash
-  git clone https://github.com/your-username/Study-PDF-Library.git
+  git clone https://github.com/Kleinz17/Study-PDF-Library.git
   cd Study-PDF-Library
   ```
 - **Install dependencies:**
   ```bash
   flutter pub get
+  ```
+- **Database Code Generation (Drift):**
+  If modifying database schemas, run the Drift code generator:
+  ```bash
+  flutter pub run build_runner build --delete-conflicting-outputs
   ```
 - **Configuration:**
   This project reads configuration from a `.env` file (if required for backend or API extensions). Copy `.env.example` to `.env` and fill in any placeholder values:
@@ -43,13 +48,13 @@ Run the app on Windows desktop:
 flutter run -d windows
 ```
 
-or on Chrome:
-(currently unavailable)
+or on Chrome / Web:
+
 ```bash
 flutter run -d chrome
 ```
 
-When running successfully, you will see the **Study Library Home Screen**, where you can import local PDF files using the floating action button, save them to the local Drift database, and view them natively in the PDF Viewer.
+When running successfully, you will see the **Study Library Home Screen**, where you can import local PDF files using the floating action button (`+`), save them to the local Drift database, and view them natively in the PDF Viewer with automatic progress persistence.
 
 ---
 
@@ -58,14 +63,18 @@ When running successfully, you will see the **Study Library Home Screen**, where
 Walk through the primary user flow, screen by screen:
 
 1. **Home Screen (Library):**
-   - Displays a grid of study PDF review cards (e.g., Organic Chemistry, Data Structures, Integral Calculus).
-   - Each card shows the file title, status badge, progress percentage, and a `LinearProgressIndicator`.
+   - Displays a grid of imported study PDF review cards from the local SQLite database.
+   - Each card shows the file title, progress badge, and a `LinearProgressIndicator`.
+   - Floating Action Button (`+`) opens the device file picker to import custom `.pdf` study materials.
    - Tapping any card navigates to the PDF Viewer.
 2. **PDF Viewer Screen:**
-   - Renders the selected PDF document utilizing the `pdfrx` package (`PdfViewer.asset`).
-   - Allows users to read and navigate study materials directly within the app.
-3. **Additional Screens & Components (Stubs / Navigation):**
-   - Folders Screen, Kanban Study Task Board, and Settings Screen stubs are wired up with M3 design components (`AppBottomNav`, `PrimaryAppBar`, `PrimaryFab`, etc.).
+   - Renders selected PDF documents utilizing the `pdfrx` package (`PdfViewer.file`).
+   - Automatically tracks and updates current page reading progress in the database.
+3. **Additional Screens & Components (App Shell & Navigation):**
+   - **Folders Screen:** Organized study material categories.
+   - **Kanban Study Task Board:** Task tracking and study planning board.
+   - **Settings Screen:** App preferences and configuration.
+   - Navigation managed via `AppShell` with Material 3 bottom navigation bar and custom components (`PrimaryAppBar`, `PrimaryFab`, etc.).
 
 ---
 
@@ -77,9 +86,13 @@ A short map of the `lib/` directory and key files:
 lib/
 ├── main.dart                  # App entry point with DevicePreview configuration
 ├── theme.dart                 # Material 3 theme, AppSpacing, and StatusColors definitions
+├── app_shell.dart             # Main bottom navigation shell managing tabs and database instance
+├── database/
+│   ├── app_database.dart      # Drift SQLite database definition (Documents table)
+│   └── app_database.g.dart    # Generated Drift database code
 ├── screens/
-│   ├── home_screen.dart       # Main library grid view with document cards
-│   ├── pdf_viewer_screen.dart # PDF document reader screen using pdfrx
+│   ├── home_screen.dart       # Main library grid view with document cards and file picker
+│   ├── pdf_viewer_screen.dart # PDF document reader screen using pdfrx with progress tracking
 │   ├── folders_screen.dart    # Folders management screen stub
 │   ├── kanban_screen.dart     # Study task kanban board screen stub
 │   └── settings_screen.dart   # App settings screen stub
@@ -102,22 +115,22 @@ lib/
 
 | Home Screen (Library) | PDF Viewer Screen |
 | --- | --- |
-| ![Home Screen](docs/assets/screen-home.png) | ![PDF Viewer](docs/assets/screen-viewer.png) |
+| ![Home Screen](docs/assets/home-screen.png) | ![PDF Viewer](docs/assets/pdf-viewer-screen.png) |
 
 ---
 
 ## 7. Known issues and next steps
 
-- **Current Limitations:** The app currently uses a static list of predefined reviewers and sample PDF assets (`assets/dummy.pdf`). Local file picking and cloud synchronization are planned next steps.
+- **Current Limitations:** 
+  - Pdf can only view. No bookmarks and additional controls yet.
+  - Web testing doesn't work (may not go forward due to local database behaviours)
 - **Next Steps:**
-  - Implement file picker (`file_picker` package) to allow users to import local PDF files.
-  - Integrate local SQLite / Hive or Supabase storage for persistent reading progress and bookmarking.
-  - Complete the Kanban task management screen for study planning.
+  - Fill out screen stubs.
+  - Add Bookmark, Kanban board, and Folder creations.
+
 
 ---
 
 ## AI Usage
 
-- AI tools (Claude / ChatGPT / Agents) were used as coding assistants for structuring Material 3 themes, wiring navigation, and drafting documentation. They are also used for self studying app development, See `AI-USAGE.md` for full details.
-
-
+- AI tools (Claude / ChatGPT / Agents) were used as coding assistants for structuring Material 3 themes, and drafting documentation. It is also used as a self study tool for app development. See `AI-USAGE.md` for full details.
