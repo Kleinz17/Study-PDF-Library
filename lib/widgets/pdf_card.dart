@@ -41,7 +41,7 @@ class PdfCard extends StatelessWidget {
               Text(fileName, style: theme.textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
               SizedBox(height: AppSpacing.sm), //spacing
               //progress label
-              Text(progressLabel, style: theme.textTheme.labelSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(progressLabel, style: theme.textTheme.labelSmall, maxLines: 2, overflow: TextOverflow.ellipsis),
               SizedBox(height: AppSpacing.sm), //spacing
               //progress bar
               LinearProgressIndicator(value: progress),

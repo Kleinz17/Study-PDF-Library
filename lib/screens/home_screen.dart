@@ -49,14 +49,14 @@ class HomeScreen extends StatelessWidget{
 
           return GridView.count(
             crossAxisCount: 2, 
-            childAspectRatio:  1.1,
+            childAspectRatio:  0.95,
             padding: const EdgeInsets.all(AppSpacing.md),
             children: docs.map((doc) {
               double progress = doc.totalPages > 0 ? doc.lastPageRead / doc.totalPages : 0.0;
               return PdfCard(
                 fileName: doc.fileName,
                 progress: progress,
-                progressLabel: 'P ${doc.lastPageRead} of ${doc.totalPages} · ${(progress * 100).toInt()}% Completed',
+                progressLabel: 'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
                 onTap:(){
                   Navigator.push(
                     context, 
