@@ -25,3 +25,38 @@
 - Set up Drift (SQLite) database schema and tables (Document, Folder, Task).
 - Implement the file_picker package to allow users to import local PDF files from their device.
 - Build out core custom widgets and polish screen layouts to match the design system mockup before the deadline.
+
+---
+
+## Week of: September 24 – September 27, 2026 (Week 2)
+
+## What changed this week
+
+- **Drift (SQLite) Database Implementation:** Created the persistent relational database schema (`lib/database/app_database.dart`) with the `Documents` table to store metadata such as file title, file path, total pages, and last read page.
+- **Native File Picker Integration:** Integrated the `file_picker` package into `HomeScreen` floating action button (`+`) enabling users to import any local `.pdf` file from their device directly into the local SQLite database.
+- **Persistent Reading Progress Tracking:** Updated `PdfViewerScreen` and `AppShell` session state management to track and save current page numbers back to the Drift database in real time as the user reads.
+- **Code Generation & Clean Build:** Ran `build_runner` to generate Drift boilerplate (`app_database.g.dart`) and verified the entire codebase with `flutter analyze` ensuring zero linter warnings.
+
+## Why
+
+- These updates completed the core functional requirements of the app, transforming it from a static mockup viewer into a fully interactive, persistent study library where users can import and read their own PDF materials while tracking progress.
+
+## What broke or what I got stuck on
+- **Progress bar not updating / last viewed page not saving:** Cards on the home screen always showed 0% and never changed, no matter how far I read in the PDF.
+  - *Cause:* Three separate problems stacked together:
+    - `totalPages` was never set on import, so it stayed at the default of 0 and the progress ratio was always 0.
+    - `PdfViewerScreen` never wrote the current page back to the database.
+    - `HomeScreen` and `PdfViewerScreen` each created their own `AppDatabase()` instance. Drift's live streams only react to writes made through the same instance, so the home screen didn't refresh when I returned from the viewer. It only updated after switching tabs, because that rebuilt the screen.
+  - *Fix:* Read the real page count with `PdfDocument.openFile` during import and saved it as `totalPages`. Also added `_onPageChanged(int? pageNumber)` in `PdfViewerScreen` (via pdfrx's `onPageChanged`) to write `lastPageRead` to the database then created a single shared `AppDatabase` in `AppShell` and passed it into both screens, so the stream on the home screen sees the viewer's writes immediately.
+
+
+- **Database Schema Updates & Nullability:** Initially encountered type mismatch issues between nullable file paths and required database columns when selecting files via `file_picker`. 
+  - *Fix:* Added strict null checks (`if (file.path == null) return;`) and handled companion values correctly in Drift.
+- **Build Runner Outdated Generated Code:** When modifying the database table schema, type bindings became out of sync. 
+  - *Fix:* Executed `flutter pub run build_runner build --delete-conflicting-outputs` to regenerate fresh serialization code.
+
+## What is left
+
+- Final polish of additional screen stubs (Folders and Kanban boards) if required for extended functionality.
+- Final documentation and repository check prior to submission.
+
