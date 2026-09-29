@@ -29,7 +29,7 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     final screens = [
       HomeScreen(db: db),                          // ← CHANGE: was HomeScreen()
-      const FoldersScreen(),
+      FoldersScreen(db: db),
       const KanbanScreen(),
       SettingsScreen(onGoHome: () => _goToTab(0)),
     ];
