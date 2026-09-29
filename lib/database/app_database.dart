@@ -20,6 +20,7 @@ class Folders extends Table {
   IntColumn get id => integer().autoIncrement()(); //Primary Key
   TextColumn get name => text().withLength(min:1, max: 100)();
   TextColumn get color => text().withLength(min: 4, max: 9)(); 
+  IntColumn get parentId => integer().nullable()();
 }
 
 class Tasks extends Table {
@@ -37,7 +38,7 @@ class Bookmarks extends Table {
   TextColumn get note => text().nullable()();
   DateTimeColumn get dateAdded => dateTime().withDefault(currentDateAndTime)();
 
-    IntColumn get documentId => integer()(); // Foreign Key link to documents
+  IntColumn get documentId => integer()(); // Foreign Key link to documents
 }
 
 @DriftDatabase(tables: [Documents, Folders, Tasks, Bookmarks])
@@ -45,7 +46,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      if (from < 2) await m.addColumn(folders, folders.parentId);
+    },
+  );
 
   static QueryExecutor _openConnection() {
      // drift_flutter automatically uses native SQLite on Windows, macOS, Linux, Android, and iOS!

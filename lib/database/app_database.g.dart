@@ -557,8 +557,19 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, Folder> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _parentIdMeta = const VerificationMeta(
+    'parentId',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, name, color];
+  late final GeneratedColumn<int> parentId = GeneratedColumn<int>(
+    'parent_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, color, parentId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -590,6 +601,12 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, Folder> {
     } else if (isInserting) {
       context.missing(_colorMeta);
     }
+    if (data.containsKey('parent_id')) {
+      context.handle(
+        _parentIdMeta,
+        parentId.isAcceptableOrUnknown(data['parent_id']!, _parentIdMeta),
+      );
+    }
     return context;
   }
 
@@ -611,6 +628,10 @@ class $FoldersTable extends Folders with TableInfo<$FoldersTable, Folder> {
         DriftSqlType.string,
         data['${effectivePrefix}color'],
       )!,
+      parentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}parent_id'],
+      ),
     );
   }
 
@@ -624,13 +645,22 @@ class Folder extends DataClass implements Insertable<Folder> {
   final int id;
   final String name;
   final String color;
-  const Folder({required this.id, required this.name, required this.color});
+  final int? parentId;
+  const Folder({
+    required this.id,
+    required this.name,
+    required this.color,
+    this.parentId,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['color'] = Variable<String>(color);
+    if (!nullToAbsent || parentId != null) {
+      map['parent_id'] = Variable<int>(parentId);
+    }
     return map;
   }
 
@@ -639,6 +669,9 @@ class Folder extends DataClass implements Insertable<Folder> {
       id: Value(id),
       name: Value(name),
       color: Value(color),
+      parentId: parentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(parentId),
     );
   }
 
@@ -651,6 +684,7 @@ class Folder extends DataClass implements Insertable<Folder> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       color: serializer.fromJson<String>(json['color']),
+      parentId: serializer.fromJson<int?>(json['parentId']),
     );
   }
   @override
@@ -660,19 +694,27 @@ class Folder extends DataClass implements Insertable<Folder> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'color': serializer.toJson<String>(color),
+      'parentId': serializer.toJson<int?>(parentId),
     };
   }
 
-  Folder copyWith({int? id, String? name, String? color}) => Folder(
+  Folder copyWith({
+    int? id,
+    String? name,
+    String? color,
+    Value<int?> parentId = const Value.absent(),
+  }) => Folder(
     id: id ?? this.id,
     name: name ?? this.name,
     color: color ?? this.color,
+    parentId: parentId.present ? parentId.value : this.parentId,
   );
   Folder copyWithCompanion(FoldersCompanion data) {
     return Folder(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       color: data.color.present ? data.color.value : this.color,
+      parentId: data.parentId.present ? data.parentId.value : this.parentId,
     );
   }
 
@@ -681,46 +723,53 @@ class Folder extends DataClass implements Insertable<Folder> {
     return (StringBuffer('Folder(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('parentId: $parentId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, color);
+  int get hashCode => Object.hash(id, name, color, parentId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Folder &&
           other.id == this.id &&
           other.name == this.name &&
-          other.color == this.color);
+          other.color == this.color &&
+          other.parentId == this.parentId);
 }
 
 class FoldersCompanion extends UpdateCompanion<Folder> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> color;
+  final Value<int?> parentId;
   const FoldersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.color = const Value.absent(),
+    this.parentId = const Value.absent(),
   });
   FoldersCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String color,
+    this.parentId = const Value.absent(),
   }) : name = Value(name),
        color = Value(color);
   static Insertable<Folder> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? color,
+    Expression<int>? parentId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (color != null) 'color': color,
+      if (parentId != null) 'parent_id': parentId,
     });
   }
 
@@ -728,11 +777,13 @@ class FoldersCompanion extends UpdateCompanion<Folder> {
     Value<int>? id,
     Value<String>? name,
     Value<String>? color,
+    Value<int?>? parentId,
   }) {
     return FoldersCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       color: color ?? this.color,
+      parentId: parentId ?? this.parentId,
     );
   }
 
@@ -748,6 +799,9 @@ class FoldersCompanion extends UpdateCompanion<Folder> {
     if (color.present) {
       map['color'] = Variable<String>(color.value);
     }
+    if (parentId.present) {
+      map['parent_id'] = Variable<int>(parentId.value);
+    }
     return map;
   }
 
@@ -756,7 +810,8 @@ class FoldersCompanion extends UpdateCompanion<Folder> {
     return (StringBuffer('FoldersCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('color: $color')
+          ..write('color: $color, ')
+          ..write('parentId: $parentId')
           ..write(')'))
         .toString();
   }
@@ -1692,12 +1747,14 @@ typedef $$FoldersTableCreateCompanionBuilder =
       Value<int> id,
       required String name,
       required String color,
+      Value<int?> parentId,
     });
 typedef $$FoldersTableUpdateCompanionBuilder =
     FoldersCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<String> color,
+      Value<int?> parentId,
     });
 
 class $$FoldersTableFilterComposer
@@ -1721,6 +1778,11 @@ class $$FoldersTableFilterComposer
 
   ColumnFilters<String> get color => $composableBuilder(
     column: $table.color,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get parentId => $composableBuilder(
+    column: $table.parentId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1748,6 +1810,11 @@ class $$FoldersTableOrderingComposer
     column: $table.color,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get parentId => $composableBuilder(
+    column: $table.parentId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$FoldersTableAnnotationComposer
@@ -1767,6 +1834,9 @@ class $$FoldersTableAnnotationComposer
 
   GeneratedColumn<String> get color =>
       $composableBuilder(column: $table.color, builder: (column) => column);
+
+  GeneratedColumn<int> get parentId =>
+      $composableBuilder(column: $table.parentId, builder: (column) => column);
 }
 
 class $$FoldersTableTableManager
@@ -1800,13 +1870,25 @@ class $$FoldersTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String> color = const Value.absent(),
-              }) => FoldersCompanion(id: id, name: name, color: color),
+                Value<int?> parentId = const Value.absent(),
+              }) => FoldersCompanion(
+                id: id,
+                name: name,
+                color: color,
+                parentId: parentId,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
                 required String color,
-              }) => FoldersCompanion.insert(id: id, name: name, color: color),
+                Value<int?> parentId = const Value.absent(),
+              }) => FoldersCompanion.insert(
+                id: id,
+                name: name,
+                color: color,
+                parentId: parentId,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
