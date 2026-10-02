@@ -28,9 +28,9 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(db: db),                          // ← CHANGE: was HomeScreen()
+      HomeScreen(db: db),                       
       FoldersScreen(db: db),
-      const KanbanScreen(),
+      KanbanScreen(db: db),
       SettingsScreen(onGoHome: () => _goToTab(0)),
     ];
 
