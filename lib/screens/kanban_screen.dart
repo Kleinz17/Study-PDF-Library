@@ -95,10 +95,10 @@ class _KanbanScreenState extends State<KanbanScreen> {
               final tasks = taskSnap.data!;
               final docMap = {for (var d in (docSnap.data ?? [])) d.id: d.fileName};
               final sections = [
-                {'title': 'To Study', 'color': Colors.blue},
-                {'title': 'In Progress', 'color': Colors.purple},
-                {'title': 'Revision', 'color': Colors.orange},
-                {'title': 'Completed', 'color': Colors.green},
+                {'title': 'To Study', 'color': StatusColors.toStudy},
+                {'title': 'In Progress', 'color': StatusColors.inProgress},
+                {'title': 'Revision', 'color': StatusColors.revision},
+                {'title': 'Completed', 'color': StatusColors.completed},
               ];
 
               return ListView(

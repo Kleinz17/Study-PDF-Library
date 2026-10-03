@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.light);
+
 class AppSpacing {
   static const double xs = 4;
   static const double sm = 8;
@@ -85,4 +87,42 @@ final appTheme = ThemeData(
   ),
 
 );
+
+final darkColorScheme = ColorScheme.fromSeed(
+  seedColor: const Color(0xFF42A5F5), // same brand seed as the light scheme
+  brightness: Brightness.dark,
+);
+
+final darkAppTheme = ThemeData(
+  useMaterial3: true,
+  fontFamily: GoogleFonts.inter().fontFamily,
+  colorScheme: darkColorScheme,
+  scaffoldBackgroundColor: darkColorScheme.surface,
+  textTheme: TextTheme(
+    headlineSmall: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    bodyMedium: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    labelSmall: TextStyle(fontSize: 12, color: darkColorScheme.onSurfaceVariant, fontWeight: FontWeight.bold),
+  ),
+  cardTheme: const CardThemeData(
+    margin: EdgeInsets.all(AppSpacing.sm),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+  ),
+  filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48))),
+  appBarTheme: AppBarTheme(
+    backgroundColor: darkColorScheme.primary,
+    foregroundColor: darkColorScheme.onPrimary,
+    titleTextStyle: TextStyle(color: darkColorScheme.onPrimary, fontSize: 20, fontWeight: FontWeight.bold),
+  ),
+  navigationBarTheme: NavigationBarThemeData(
+    indicatorColor: Colors.transparent,
+    iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
+          color: states.contains(WidgetState.selected) ? darkColorScheme.primary : darkColorScheme.onSurfaceVariant,
+        )),
+    labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
+          fontSize: 12,
+          color: states.contains(WidgetState.selected) ? darkColorScheme.primary : darkColorScheme.onSurfaceVariant,
+        )),
+  ),
+);
+
 

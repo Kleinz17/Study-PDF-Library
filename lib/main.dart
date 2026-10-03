@@ -21,13 +21,20 @@ class StudyLibraryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Study Library',
-      debugShowCheckedModeBanner: false,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      theme: appTheme,
-      home: const AppShell(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeModeNotifier,
+      builder: (context, mode, _) {
+        return MaterialApp(
+          title: 'Study Library',
+          debugShowCheckedModeBanner: false,
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
+          theme: appTheme,
+          darkTheme: darkAppTheme,
+          themeMode: mode,
+          home: const AppShell(),
+        );
+      },
     );
   }
 }
