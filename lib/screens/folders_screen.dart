@@ -13,14 +13,39 @@ class FoldersScreen extends StatelessWidget {
 
   final AppDatabase db;
 
-  /// parentId == null creates a semester, otherwise a subject inside that semester.
-  Future<void> _createFolder(BuildContext context, {int? parentId}) async {
-    final isSemester = parentId == null;
+  Future<void> _createSemester(BuildContext context) async {
+    final result = await showDialog<({String semesterName, List<String> subjects})>(
+      context: context,
+      builder: (context) => const _NewSemesterDialog(),
+    );
+    if (result == null || result.semesterName.trim().isEmpty) return;
+
+    final semesterId = await db.into(db.folders).insert(
+          FoldersCompanion(
+            name: Value(result.semesterName.trim()),
+            color: const Value('#31628D'),
+            parentId: const Value(null),
+          ),
+        );
+
+    for (final subjectName in result.subjects) {
+      await db.into(db.folders).insert(
+            FoldersCompanion(
+              name: Value(subjectName),
+              color: const Value('#31628D'),
+              parentId: Value(semesterId),
+            ),
+          );
+    }
+  }
+
+
+  Future<void> _createFolder(BuildContext context, {required int parentId}) async {
     final name = await showDialog<String>(
       context: context,
-      builder: (context) => _NewFolderDialog(
-        title: isSemester ? 'New Semester' : 'New Subject',
-        label: isSemester ? 'Semester name (e.g. Semester 1)' : 'Subject name (e.g. Math)',
+      builder: (context) => const _NewFolderDialog(
+        title: 'New Subject',
+        label: 'Subject name (e.g. Math)',
       ),
     );
     if (name == null || name.trim().isEmpty) return;
@@ -28,7 +53,7 @@ class FoldersScreen extends StatelessWidget {
     await db.into(db.folders).insert(
           FoldersCompanion(
             name: Value(name.trim()),
-            color: const Value('#31628D'), // required column, no picker in the mockup
+            color: const Value('#31628D'),
             parentId: Value(parentId),
           ),
         );
@@ -81,7 +106,7 @@ class FoldersScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: 'New semester',
-            onPressed: () => _createFolder(context),
+            onPressed: () => _createSemester(context),
           ),
         ],
       ),
@@ -115,7 +140,7 @@ class FoldersScreen extends StatelessWidget {
                       width: 240,
                       child: PrimaryButton(
                         label: 'Create semester',
-                        onPressed: () => _createFolder(context),
+                        onPressed: () => _createSemester(context),
                       ),
                     ),
                   ],
