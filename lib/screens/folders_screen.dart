@@ -7,12 +7,13 @@ import '../widgets/folder_card.dart';
 import '../widgets/primary_app_bar.dart';
 import '../widgets/primary_button.dart';
 
-
 class FoldersScreen extends StatelessWidget {
   const FoldersScreen({super.key, required this.db});
 
   final AppDatabase db;
 
+  /// Creates a semester and, optionally, a whole batch of subjects inside it
+  /// in one go — used by the app bar '+' for first-time setup.
   Future<void> _createSemester(BuildContext context) async {
     final result = await showDialog<({String semesterName, List<String> subjects})>(
       context: context,
@@ -39,8 +40,8 @@ class FoldersScreen extends StatelessWidget {
     }
   }
 
-
-  Future<void> _createFolder(BuildContext context, {required int parentId}) async {
+  /// Adds a single subject to an existing semester — used by the per-semester '+'.
+  Future<void> _createSubject(BuildContext context, int semesterId) async {
     final name = await showDialog<String>(
       context: context,
       builder: (context) => const _NewFolderDialog(
@@ -54,7 +55,7 @@ class FoldersScreen extends StatelessWidget {
           FoldersCompanion(
             name: Value(name.trim()),
             color: const Value('#31628D'),
-            parentId: Value(parentId),
+            parentId: Value(semesterId),
           ),
         );
   }
@@ -131,7 +132,7 @@ class FoldersScreen extends StatelessWidget {
                     Text('What semester are you in?', style: theme.textTheme.headlineSmall),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Create a semester first, then add your subjects inside it.',
+                      'Create a semester and add its subjects in one go.',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.labelSmall,
                     ),
@@ -170,7 +171,7 @@ class FoldersScreen extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.add),
                           tooltip: 'Add subject',
-                          onPressed: () => _createFolder(context, parentId: semester.id),
+                          onPressed: () => _createSubject(context, semester.id),
                         ),
                       ],
                     ),
@@ -186,6 +187,70 @@ class FoldersScreen extends StatelessWidget {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _NewSemesterDialog extends StatefulWidget {
+  const _NewSemesterDialog();
+
+  @override
+  State<_NewSemesterDialog> createState() => _NewSemesterDialogState();
+}
+
+class _NewSemesterDialogState extends State<_NewSemesterDialog> {
+  final _nameController = TextEditingController();
+  final _subjectsController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _subjectsController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final subjects = _subjectsController.text
+        .split('\n')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    Navigator.pop(context, (semesterName: _nameController.text, subjects: subjects));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('New Semester', style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: _nameController,
+              autofocus: true,
+              decoration: const InputDecoration(labelText: 'Semester name (e.g. Semester 1)', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: _subjectsController,
+              minLines: 3,
+              maxLines: 6,
+              decoration: const InputDecoration(
+                labelText: 'Subjects (optional)',
+                hintText: 'One per line, e.g.\nMath\nScience\nCoding',
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            PrimaryButton(label: 'Create', onPressed: _submit),
+          ],
+        ),
       ),
     );
   }
