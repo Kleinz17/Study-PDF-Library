@@ -111,7 +111,7 @@ final darkAppTheme = ThemeData(
   appBarTheme: AppBarTheme(
     backgroundColor: darkColorScheme.primary,
     foregroundColor: darkColorScheme.onPrimary,
-    titleTextStyle: TextStyle(color: darkColorScheme.onPrimary, fontSize: 20, fontWeight: FontWeight.bold),
+    titleTextStyle: TextStyle(color: darkColorScheme.onPrimary, fontSize: 18, fontWeight: FontWeight.bold),
   ),
   navigationBarTheme: NavigationBarThemeData(
     indicatorColor: Colors.transparent,
