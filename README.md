@@ -113,9 +113,9 @@ lib/
 
 ## 6. Screenshots
 
-| Home Screen (Library) | PDF Viewer Screen | Folder Screen | Kanban Screen | Settings Screen
-| --- | --- | --- | --- | --- | --- |
-| ![Home Screen](docs/assets/home-screen.png) | ![PDF Viewer](docs/assets/pdf-viewer-screen.png) | ![PDF Viewer](docs/assets/folder-screen.png) | ![PDF Viewer](docs/assets/kanban-screen.png) | ![PDF Viewer](docs/assets/settings-screen.png)
+| Home Screen (Library) | PDF Viewer Screen | Folder Screen | Kanban Screen | Settings Screen |
+| :---: | :---: | :---: | :---: | :---: |
+| ![Home Screen](docs/assets/home-screen.png) | ![PDF Viewer](docs/assets/pdf-viewer-screen.png) | ![Folder Screen](docs/assets/folder-screen.png) | ![Kanban Screen](docs/assets/kanban-screen.png) | ![Settings Screen](docs/assets/settings-screen.png) |
 
 ---
 
