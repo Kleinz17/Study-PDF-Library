@@ -113,9 +113,9 @@ lib/
 
 ## 6. Screenshots
 
-| Home Screen (Library) | PDF Viewer Screen |
+| Home Screen (Library) | PDF Viewer Screen | Folder Screen | Kanban Screen | Settings Screen
 | --- | --- |
-| ![Home Screen](docs/assets/home-screen.png) | ![PDF Viewer](docs/assets/pdf-viewer-screen.png) |
+| ![Home Screen](docs/assets/home-screen.png) | ![PDF Viewer](docs/assets/pdf-viewer-screen.png) | ![PDF Viewer](docs/assets/folder-screen.png) | ![PDF Viewer](docs/assets/kanban-screen.png) | ![PDF Viewer](docs/assets/settings-screen.png)
 
 ---
 
@@ -123,10 +123,11 @@ lib/
 
 - **Current Limitations:** 
   - Pdf can only view. No bookmarks and additional controls yet.
-  - Web testing doesn't work (may not go forward due to local database behaviours)
+  - Web testing doesn't work (may not go forward due to local database behaviors)
+
 - **Next Steps:**
-  - Fill out screen stubs.
-  - Add Bookmark, Kanban board, and Folder creations.
+  - Polish
+  - Fix bugs
 
 
 ---
