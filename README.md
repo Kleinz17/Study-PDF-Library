@@ -93,20 +93,20 @@ lib/
 ├── screens/
 │   ├── home_screen.dart       # Main library grid view with document cards and file picker
 │   ├── pdf_viewer_screen.dart # PDF document reader screen using pdfrx with progress tracking
-│   ├── folders_screen.dart    # Folders management screen stub
-│   ├── kanban_screen.dart     # Study task kanban board screen stub
-│   └── settings_screen.dart   # App settings screen stub
+│   ├── folders_screen.dart    # Folders management screen
+│   ├── kanban_screen.dart     # Study task kanban board screen
+│   └── settings_screen.dart   # App settings screen
 └── widgets/
     ├── pdf_card.dart          # Reusable card widget for study documents
-    ├── folder_card.dart       # Folder item component stub
-    ├── primary_app_bar.dart   # Standardized M3 app bar component stub
-    ├── app_bottom_nav.dart    # Bottom navigation bar component stub
+    ├── folder_card.dart       # Folder item component
+    ├── primary_app_bar.dart   # Standardized M3 app bar component
+    ├── app_bottom_nav.dart    # Bottom navigation bar component
     ├── primary_fab.dart       # Floating action button component stub
-    ├── kanban_status_section.dart # Kanban section column component stub
-    ├── task_list_item.dart    # Kanban task list item component stub
-    ├── settings_list_item.dart# Settings row component stub
-    ├── primary_button.dart    # Standardized filled button stub
-    └── empty_state.dart       # Empty state display component stub
+    ├── kanban_status_section.dart # Kanban section column component
+    ├── task_list_item.dart    # Kanban task list item component
+    ├── settings_list_item.dart# Settings row component 
+    ├── primary_button.dart    # Standardized filled button
+    └── empty_state.dart       # Empty state display component
 ```
 
 ---
@@ -122,7 +122,7 @@ lib/
 ## 7. Known issues and next steps
 
 - **Current Limitations:** 
-  - Pdf can only view. No bookmarks and additional controls yet.
+  - Pdf can only be viewed and bookmarked
   - Web testing doesn't work (may not go forward due to local database behaviors)
 
 - **Next Steps:**
