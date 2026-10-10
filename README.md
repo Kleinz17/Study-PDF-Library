@@ -1,7 +1,7 @@
 # Study PDF Library
 
-- **Live demo:** [kleinz17.github.io/Study-PDF-Library/](https://kleinz17.github.io/Study-PDF-Library/)
-- **Course:** Applications Development and Emerging Technologies (6ADET), Holy Angel University  
+- **Live demo:** [kleinz17.github.io/Study-PDF-Library/](https://kleinz17.github.io/Study-PDF-Library/) (not currently working)
+- **Course:** Applications Development and Emerging Technologies (6ADET) 
 - **Author:** Kleinz17 
 
 ---
