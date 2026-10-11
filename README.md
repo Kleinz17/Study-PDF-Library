@@ -38,6 +38,11 @@ Follow these steps to get the app running from scratch:
   ```
   *(Placeholder example: `EXAMPLE_API_KEY=your_api_key_here` — never commit real secrets).*
 
+## Download for Android
+
+Download the latest alpha from [GitHub Releases](https://github.com/Kleinz17/Study-PDF-Library/releases).
+For most Android phones, choose the `arm64-v8a` APK. This is an early release, so bugs are expected.
+
 ---
 
 ## 3. How to run it
