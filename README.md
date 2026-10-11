@@ -135,6 +135,7 @@ lib/
   - Fix bugs
   - Add Color coded pdf cards with the corresponding folder card color
   - Rework add semester popup to add folder color option
+  - Rework importing pdf, currently too inconvenient
   - Add reset to kanban board for a new session
   - find a better way of a more convenient way of importing folders
   - add wider screen viewports
