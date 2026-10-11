@@ -132,7 +132,7 @@ lib/
   - Rework add semester popup to add folder color option
   - Add reset to kanban board for a new session
   - find a better way of a more convenient way of importing folders
-
+  - add wider screen viewports
 
 ---
 

@@ -1,7 +1,7 @@
 # Every Flutter project has one of these. It names your app, sets the Dart
 # version it needs, and lists the packages you depend on.
 # Add a package with: flutter pub add <name>
-name: Study PDF Library
+name: final_project
 description: Study PDF Library.
 publish_to: "none"
 version: 1.0.0+1
@@ -29,7 +29,17 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.14.11 # code generator runner
   drift_dev: ^2.18.0 # drift code generator
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "docs/assets/app-icon.png"
+  
+  # Adaptive Icon Setup
+  adaptive_icon_background: "#3b6b94" # 
+  adaptive_icon_foreground: "docs/assets/app-icon.png"
+  adaptive_icon_foreground_inset: 16 #
