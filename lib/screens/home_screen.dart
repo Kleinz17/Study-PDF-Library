@@ -140,12 +140,25 @@ class HomeScreen extends StatelessWidget {
             return;
           }
 
+          final existing = await (db.select(db.documents)
+                ..where((d) => d.filePath.equals(file.path!)))
+              .get();
+
+          if (existing.isNotEmpty) {
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('"${file.name}" is already in your library.')),
+            );
+            return;
+          }
+
           final pdfDoc = await PdfDocument.openFile(file.path!);
           final totalPages = pdfDoc.pages.length;
           await pdfDoc.dispose();
 
           if (!context.mounted) return;
           final folderId = await _pickFolder(context);
+          
 
           final document = DocumentsCompanion(
             fileName: Value(file.name),
