@@ -29,18 +29,36 @@ class PdfCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
+            // Height comes from the content, so nothing can be cut off.
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                decoration: BoxDecoration(color: theme.colorScheme.primaryContainer, borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 padding: const EdgeInsets.all(AppSpacing.sm),
-                child: Icon(Icons.description_outlined, color: theme.colorScheme.onPrimaryContainer),
+                child: Icon(
+                  Icons.description_outlined,
+                  color: theme.colorScheme.onPrimaryContainer,
+                ),
               ),
-              SizedBox(height: AppSpacing.sm),
-              Text(fileName, style: theme.textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
-              SizedBox(height: AppSpacing.sm),
-              Text(progressLabel, style: theme.textTheme.labelSmall, maxLines: 2, overflow: TextOverflow.ellipsis),
-              SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                fileName,
+                style: theme.textTheme.bodyMedium,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                progressLabel,
+                style: theme.textTheme.labelSmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppSpacing.sm),
               LinearProgressIndicator(value: progress),
             ],
           ),

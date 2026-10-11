@@ -53,33 +53,52 @@ class FolderContentsScreen extends StatelessWidget {
             return const Center(child: Text('No PDFs in this folder yet.'));
           }
 
-          return GridView.count(
-            crossAxisCount: 2,
-            childAspectRatio: 0.95,
-            padding: const EdgeInsets.all(AppSpacing.md),
-            children: docs.map((doc) {
-              double progress = doc.totalPages > 0 ? doc.lastPageRead / doc.totalPages : 0.0;
-              return PdfCard(
-                fileName: doc.fileName,
-                progress: progress,
-                progressLabel: 'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PdfViewerScreen(
-                        db: db,
-                        documentId: doc.id,
-                        title: doc.title,
-                        filePath: doc.filePath,
-                        initialPage: doc.lastPageRead,
+          // Two columns whose width comes from the screen, while each
+          // card's height comes from its own content, so nothing overflows.
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              const spacing = 8.0;
+              final cardWidth =
+                  (constraints.maxWidth - AppSpacing.md * 2 - spacing) / 2;
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Wrap(
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  children: docs.map((doc) {
+                    final progress = doc.totalPages > 0
+                        ? doc.lastPageRead / doc.totalPages
+                        : 0.0;
+
+                    return SizedBox(
+                      width: cardWidth,
+                      child: PdfCard(
+                        fileName: doc.fileName,
+                        progress: progress,
+                        progressLabel:
+                            'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PdfViewerScreen(
+                                db: db,
+                                documentId: doc.id,
+                                title: doc.title,
+                                filePath: doc.filePath,
+                                initialPage: doc.lastPageRead,
+                              ),
+                            ),
+                          );
+                        },
+                        onLongPress: () => _confirmDelete(context, doc),
                       ),
-                    ),
-                  );
-                },
-                onLongPress: () => _confirmDelete(context, doc),
+                    );
+                  }).toList(),
+                ),
               );
-            }).toList(),
+            },
           );
         },
       ),

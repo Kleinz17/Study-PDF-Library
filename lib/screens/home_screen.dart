@@ -69,6 +69,53 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _importPdf(BuildContext context) async {
+    final files = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (files.isEmpty) return;
+
+    final file = files.first;
+    debugPrint('Picked file: ${file.name}');
+
+    if (file.path == null) {
+      debugPrint('Could not get file path.');
+      return;
+    }
+
+    // Block duplicates
+    final existing = await (db.select(db.documents)
+          ..where((d) => d.filePath.equals(file.path!)))
+        .get();
+
+    if (existing.isNotEmpty) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('"${file.name}" is already in your library.')),
+      );
+      return;
+    }
+
+    final pdfDoc = await PdfDocument.openFile(file.path!);
+    final totalPages = pdfDoc.pages.length;
+    await pdfDoc.dispose();
+
+    if (!context.mounted) return;
+    final folderId = await _pickFolder(context);
+
+    final document = DocumentsCompanion(
+      fileName: Value(file.name),
+      title: Value(file.name),
+      filePath: Value(file.path!),
+      totalPages: Value(totalPages),
+      folderId: Value(folderId),
+    );
+
+    await db.into(db.documents).insert(document);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,84 +139,59 @@ class HomeScreen extends StatelessWidget {
             return const Center(child: Text('No PDFs imported yet. Tap + to add one'));
           }
 
-          return GridView.count(
-            crossAxisCount: 2,
-            childAspectRatio: 0.95,
-            padding: const EdgeInsets.all(AppSpacing.md),
-            children: docs.map((doc) {
-              double progress = doc.totalPages > 0 ? doc.lastPageRead / doc.totalPages : 0.0;
-              return PdfCard(
-                fileName: doc.fileName,
-                progress: progress,
-                progressLabel: 'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PdfViewerScreen(
-                        db: db,
-                        documentId: doc.id,
-                        title: doc.title,
-                        filePath: doc.filePath,
-                        initialPage: doc.lastPageRead,
+          // Two columns whose width comes from the screen, while each
+          // card's height comes from its own content. No fixed height,
+          // so nothing can overflow or get clipped at any width or font size.
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              const spacing = 8.0;
+              final cardWidth =
+                  (constraints.maxWidth - AppSpacing.md * 2 - spacing) / 2;
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Wrap(
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  children: docs.map((doc) {
+                    final progress = doc.totalPages > 0
+                        ? doc.lastPageRead / doc.totalPages
+                        : 0.0;
+
+                    return SizedBox(
+                      width: cardWidth,
+                      child: PdfCard(
+                        fileName: doc.fileName,
+                        progress: progress,
+                        progressLabel:
+                            'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PdfViewerScreen(
+                                db: db,
+                                documentId: doc.id,
+                                title: doc.title,
+                                filePath: doc.filePath,
+                                initialPage: doc.lastPageRead,
+                              ),
+                            ),
+                          );
+                        },
+                        onLongPress: () => _confirmDelete(context, doc),
                       ),
-                    ),
-                  );
-                },
-                onLongPress: () => _confirmDelete(context, doc),
+                    );
+                  }).toList(),
+                ),
               );
-            }).toList(),
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
-        onPressed: () async {
-          final files = await FilePicker.pickFiles(
-            type: FileType.custom,
-            allowedExtensions: ['pdf'],
-          );
-
-          if (files.isEmpty) return;
-
-          final file = files.first;
-          debugPrint('Picked file: ${file.name}');
-
-          if (file.path == null) {
-            debugPrint('Could not get file path.');
-            return;
-          }
-
-          final existing = await (db.select(db.documents)
-                ..where((d) => d.filePath.equals(file.path!)))
-              .get();
-
-          if (existing.isNotEmpty) {
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('"${file.name}" is already in your library.')),
-            );
-            return;
-          }
-
-          final pdfDoc = await PdfDocument.openFile(file.path!);
-          final totalPages = pdfDoc.pages.length;
-          await pdfDoc.dispose();
-
-          if (!context.mounted) return;
-          final folderId = await _pickFolder(context);
-          
-
-          final document = DocumentsCompanion(
-            fileName: Value(file.name),
-            title: Value(file.name),
-            filePath: Value(file.path!),
-            totalPages: Value(totalPages),
-            folderId: Value(folderId),
-          );
-
-          await db.into(db.documents).insert(document);
-        },
+        onPressed: () => _importPdf(context),
         child: const Icon(Icons.add),
       ),
     );
