@@ -1,7 +1,7 @@
 # Every Flutter project has one of these. It names your app, sets the Dart
 # version it needs, and lists the packages you depend on.
 # Add a package with: flutter pub add <name>
-name: final_project
+name: Study PDF Library
 description: Study PDF Library.
 publish_to: "none"
 version: 1.0.0+1
