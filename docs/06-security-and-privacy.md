@@ -28,13 +28,13 @@ Nothing leaves the device, so there is no Firestore, Supabase or other service t
 
 ## Checklist
 
-- [ ] `.env` (or `env.json`) is in `.gitignore`, and `.env.example` is committed *(or: the app has no env file at all)*
-- [ ] `git log -p | grep -i "api_key\|secret\|password\|token"` finds nothing real
-- [ ] No service account file, keystore or `service_role` key anywhere in the repo
-- [ ] Security rules or RLS policies written and tested, not left open *(not applicable: no service side)*
-- [ ] No real personal data in sample data, screenshots or the video
-- [ ] No course or university credentials anywhere
-- [ ] Anyone whose data appears in a test was asked first
+- [x] `.env` (or `env.json`) is in `.gitignore`, and `.env.example` is committed *(or: the app has no env file at all)*
+- [x] `git log -p | grep -i "api_key\|secret\|password\|token"` finds nothing real
+- [x] No service account file, keystore or `service_role` key anywhere in the repo
+- [x] Security rules or RLS policies written and tested, not left open *(not applicable: no service side)*
+- [x] No real personal data in sample data, screenshots or the video
+- [x] No course or university credentials anywhere
+- [x] Anyone whose data appears in a test was asked first
 
 ## Keys found and revoked
 
