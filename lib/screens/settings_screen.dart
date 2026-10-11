@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/primary_app_bar.dart';
 import '../widgets/settings_list_item.dart';
 import '../theme.dart';
+import '../theme_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, required this.onGoHome});
@@ -32,7 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 icon: Icons.dark_mode_outlined,
                 trailing: Switch(
                   value: mode == ThemeMode.dark,
-                  onChanged: (on) => themeModeNotifier.value = on ? ThemeMode.dark : ThemeMode.light,
+                  onChanged: _setDarkMode,
                 ),
               ),
               SettingsListItem(
@@ -59,5 +61,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-}
 
+  Future<void> _setDarkMode(bool enabled) async {
+    final mode = enabled ? ThemeMode.dark : ThemeMode.light;
+
+    try {
+      final saved = await ThemePreferences.saveThemeMode(mode);
+      if (!mounted) return;
+
+      if (!saved) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not save the theme preference.')),
+        );
+        return;
+      }
+
+      themeModeNotifier.value = mode;
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Could not save the theme preference: ${error.message ?? error.code}',
+          ),
+        ),
+      );
+    }
+  }
+}

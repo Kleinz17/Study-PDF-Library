@@ -1,13 +1,15 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; 
+import 'package:flutter/foundation.dart';
 import 'theme.dart';
 import 'app_shell.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'theme_preferences.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    pdfrxFlutterInitialize();
+  pdfrxFlutterInitialize();
+  themeModeNotifier.value = await ThemePreferences.loadThemeMode();
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
