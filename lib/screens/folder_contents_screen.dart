@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../database/app_database.dart';
 import '../theme.dart';
+import '../widgets/delete_documents.dart';
 import '../widgets/pdf_card.dart';
 import '../widgets/primary_app_bar.dart';
 import 'pdf_viewer_screen.dart';
 
-class FolderContentsScreen extends StatelessWidget {
+class FolderContentsScreen extends StatefulWidget {
   const FolderContentsScreen({
     super.key,
     required this.db,
@@ -17,91 +18,113 @@ class FolderContentsScreen extends StatelessWidget {
   final int folderId;
   final String folderName;
 
-  Future<void> _confirmDelete(BuildContext context, Document doc) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Remove PDF?'),
-        content: Text('"${doc.fileName}" will be removed from your library. The original file on your computer is not affected.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Remove')),
-        ],
-      ),
-    );
+  @override
+  State<FolderContentsScreen> createState() => _FolderContentsScreenState();
+}
 
-    if (confirmed == true) {
-      await (db.delete(db.documents)..where((d) => d.id.equals(doc.id))).go();
-    }
+class _FolderContentsScreenState extends State<FolderContentsScreen> {
+  final Set<int> _selectedIds = {};
+
+  bool get _selecting => _selectedIds.isNotEmpty;
+
+  void _toggle(int id) {
+    setState(() {
+      if (!_selectedIds.remove(id)) _selectedIds.add(id);
+    });
+  }
+
+  void _clearSelection() => setState(_selectedIds.clear);
+
+  Future<void> _deleteSelected(List<Document> docs) async {
+    final toDelete = docs.where((d) => _selectedIds.contains(d.id)).toList();
+    final deleted = await confirmAndDeleteDocuments(context, widget.db, toDelete);
+    if (deleted && mounted) _clearSelection();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PrimaryAppBar(title: folderName, onBack: () => Navigator.pop(context)),
-      body: StreamBuilder<List<Document>>(
-        // Same query as Home, just filtered down to this folder.
-        stream: (db.select(db.documents)..where((d) => d.folderId.equals(folderId))).watch(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return StreamBuilder<List<Document>>(
+      // Same query as Home, just filtered down to this folder.
+      stream: (widget.db.select(widget.db.documents)..where((d) => d.folderId.equals(widget.folderId))).watch(),
+      builder: (context, snapshot) {
+        final docs = snapshot.data ?? const <Document>[];
+        final allSelected = docs.isNotEmpty && docs.every((d) => _selectedIds.contains(d.id));
 
-          final docs = snapshot.data!;
-
-          if (docs.isEmpty) {
-            return const Center(child: Text('No PDFs in this folder yet.'));
-          }
-
-          // Two columns whose width comes from the screen, while each
-          // card's height comes from its own content, so nothing overflows.
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              const spacing = 8.0;
-              final cardWidth =
-                  (constraints.maxWidth - AppSpacing.md * 2 - spacing) / 2;
-
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Wrap(
-                  spacing: spacing,
-                  runSpacing: spacing,
-                  children: docs.map((doc) {
-                    final progress = doc.totalPages > 0
-                        ? doc.lastPageRead / doc.totalPages
-                        : 0.0;
-
-                    return SizedBox(
-                      width: cardWidth,
-                      child: PdfCard(
-                        fileName: doc.fileName,
-                        progress: progress,
-                        progressLabel:
-                            'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PdfViewerScreen(
-                                db: db,
-                                documentId: doc.id,
-                                title: doc.title,
-                                filePath: doc.filePath,
-                                initialPage: doc.lastPageRead,
-                              ),
-                            ),
-                          );
-                        },
-                        onLongPress: () => _confirmDelete(context, doc),
+        return PopScope(
+          canPop: !_selecting,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) _clearSelection();
+          },
+          child: Scaffold(
+            appBar: _selecting
+                ? PrimaryAppBar(
+                    title: '${_selectedIds.length} selected',
+                    leading: IconButton(
+                      icon: const Icon(Icons.close),
+                      tooltip: 'Cancel selection',
+                      onPressed: _clearSelection,
+                    ),
+                    actions: [
+                      IconButton(
+                        icon: Icon(allSelected ? Icons.deselect : Icons.select_all),
+                        tooltip: allSelected ? 'Deselect all' : 'Select all',
+                        onPressed: () => setState(() {
+                          if (allSelected) {
+                            _selectedIds.clear();
+                          } else {
+                            _selectedIds.addAll(docs.map((d) => d.id));
+                          }
+                        }),
                       ),
-                    );
-                  }).toList(),
-                ),
-              );
-            },
-          );
-        },
-      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        tooltip: 'Delete selected',
+                        onPressed: () => _deleteSelected(docs),
+                      ),
+                    ],
+                  )
+                : PrimaryAppBar(title: widget.folderName, onBack: () => Navigator.pop(context)),
+            body: !snapshot.hasData
+                ? const Center(child: CircularProgressIndicator())
+                : docs.isEmpty
+                    ? const Center(child: Text('No PDFs in this folder yet.'))
+                    : GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.95,
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        children: docs.map((doc) {
+                          double progress = doc.totalPages > 0 ? doc.lastPageRead / doc.totalPages : 0.0;
+                          return PdfCard(
+                            fileName: doc.fileName,
+                            progress: progress,
+                            progressLabel: 'Page ${doc.lastPageRead} of ${doc.totalPages}\n${(progress * 100).toInt()}% Completed',
+                            selectionMode: _selecting,
+                            selected: _selectedIds.contains(doc.id),
+                            onTap: () {
+                              if (_selecting) {
+                                _toggle(doc.id);
+                                return;
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PdfViewerScreen(
+                                    db: widget.db,
+                                    documentId: doc.id,
+                                    title: doc.title,
+                                    filePath: doc.filePath,
+                                    initialPage: doc.lastPageRead,
+                                  ),
+                                ),
+                              );
+                            },
+                            onLongPress: () => _toggle(doc.id),
+                          );
+                        }).toList(),
+                      ),
+          ),
+        );
+      },
     );
   }
 }
