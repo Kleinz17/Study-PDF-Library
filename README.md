@@ -85,33 +85,37 @@ Walk through the primary user flow, screen by screen:
 
 ## 5. Project structure
 
-A short map of the `lib/` directory and key files:
+A short map of the `lib/` directory and key files, including the newer additions:
 
 ```text
 lib/
-├── main.dart                  # App entry point with DevicePreview configuration
-├── theme.dart                 # Material 3 theme, AppSpacing, and StatusColors definitions
-├── app_shell.dart             # Main bottom navigation shell managing tabs and database instance
+├── main.dart                       # App entry point
+├── app_shell.dart                  # Main shell and bottom navigation layout
+├── theme.dart                      # Material 3 theme configuration
+├── theme_preferences.dart         # Persistent theme settings
 ├── database/
-│   ├── app_database.dart      # Drift SQLite database definition (Documents table)
-│   └── app_database.g.dart    # Generated Drift database code
+│   ├── app_database.dart           # Drift database schema and DAO logic
+│   └── app_database.g.dart         # Generated Drift database code
 ├── screens/
-│   ├── home_screen.dart       # Main library grid view with document cards and file picker
-│   ├── pdf_viewer_screen.dart # PDF document reader screen using pdfrx with progress tracking
-│   ├── folders_screen.dart    # Folders management screen
-│   ├── kanban_screen.dart     # Study task kanban board screen
-│   └── settings_screen.dart   # App settings screen
+│   ├── folder_contents_screen.dart # Folder detail / document list screen
+│   ├── folders_screen.dart         # Folder organization view
+│   ├── home_screen.dart            # Main PDF library dashboard
+│   ├── kanban_screen.dart          # Study task Kanban board
+│   ├── pdf_viewer_screen.dart      # PDF reader with progress tracking
+│   └── settings_screen.dart        # App settings screen
 └── widgets/
-    ├── pdf_card.dart          # Reusable card widget for study documents
-    ├── folder_card.dart       # Folder item component
-    ├── primary_app_bar.dart   # Standardized M3 app bar component
-    ├── app_bottom_nav.dart    # Bottom navigation bar component
-    ├── primary_fab.dart       # Floating action button component stub
-    ├── kanban_status_section.dart # Kanban section column component
-    ├── task_list_item.dart    # Kanban task list item component
-    ├── settings_list_item.dart# Settings row component 
-    ├── primary_button.dart    # Standardized filled button
-    └── empty_state.dart       # Empty state display component
+    ├── app_bottom_nav.dart         # Bottom navigation widget
+    ├── ask_list_item.dart          # Study task row item
+    ├── delete_documents.dart       # Delete document action dialog/widget
+    ├── empty_state.dart            # Empty state display
+    ├── folder_card.dart            # Folder item card
+    ├── kanban_status_section.dart  # Kanban column section
+    ├── pdf_card.dart               # PDF document card
+    ├── primary_app_bar.dart        # Shared app bar component
+    ├── primary_button.dart         # Shared button component
+    ├── primary_fab.dart            # Floating action button component
+    ├── settings_list_item.dart     # Settings list row
+    └── task_list_item.dart         # Legacy/alternate task item widget (if used)
 ```
 
 ---
